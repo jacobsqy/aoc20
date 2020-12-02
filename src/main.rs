@@ -1,5 +1,6 @@
 mod day1;
 mod day2;
+mod day3;
 
 use std::env;
 use std::fs;
@@ -63,6 +64,7 @@ fn main() {
         Some(p) => match p {
             Puzzle { day: 1, .. } => day1::run(&p),
             Puzzle { day: 2, .. } => day2::run(&p),
+            Puzzle { day: 3, .. } => day3::run(&p),
             _ => Err(RunError::NoResult),
         },
         _ => Err(RunError::ArgError(String::from("Could not parse day"))),
