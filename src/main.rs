@@ -1,8 +1,5 @@
-#![feature(test)]
-
-extern crate test;
-
 mod day1;
+mod day2;
 
 use std::env;
 use std::fs;
@@ -24,30 +21,33 @@ impl From<&str> for Part {
 }
 
 pub enum RunError {
-    ParseError(ParseIntError),
+    ParseError,
+    ArgError(String),
     NoResult,
 }
 
 impl From<ParseIntError> for RunError {
-    fn from(error: ParseIntError) -> Self {
-        RunError::ParseError(error)
+    fn from(_: ParseIntError) -> Self {
+        RunError::ParseError
     }
 }
 
-pub struct Puzzle<T> {
+pub struct Puzzle {
     day: i32,
     part: Part,
-    input: T,
+    input: String,
 }
 
-impl Puzzle<Vec<i32>> {
-    fn new(day: &str, part: &str, filename: &str) -> Puzzle<Vec<i32>> {
-        let day: i32 = day.parse().unwrap();
-        let part: Part = Part::from(part);
-        let input: Vec<i32> = fs::read_to_string(filename).unwrap().lines()
-            .map(|x| x.parse::<i32>().unwrap()).collect();
-
-        Puzzle {day, part, input}
+impl Puzzle {
+    fn new(day: &str, part: &str, filename: &str) -> Option<Puzzle> {
+        match fs::read_to_string(filename) {
+            Ok(content) => Some(Puzzle {
+                day: day.parse().unwrap(),
+                part: Part::from(part),
+                input: content,
+            }),
+            Err(_) => None,
+        }
     }
 }
 
@@ -57,36 +57,21 @@ fn main() {
     let part = &args[2];
     let filename = &args[3];
 
-    let puzzle: Puzzle<Vec<i32>> = Puzzle::new(day, part, filename);
+    let puzzle: Option<Puzzle> = Puzzle::new(day, part, filename);
 
-    let e = match puzzle.day {
-        1 => day1::run(&puzzle),
-        _ => Err(RunError::NoResult)
+    let result = match puzzle {
+        Some(p) => match p {
+            Puzzle { day: 1, .. } => day1::run(&p),
+            Puzzle { day: 2, .. } => day2::run(&p),
+            _ => Err(RunError::NoResult),
+        },
+        _ => Err(RunError::ArgError(String::from("Could not parse day"))),
     };
-    match e {
+
+    match result {
         Ok(output) => println!("Answer: {}", output),
         Err(RunError::NoResult) => println!("No answer found!"),
-        Err(RunError::ParseError(e)) =>
-            println!("There was a problem parsing the input\n{:?}", e),
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use test::Bencher;
-
-    #[bench]
-    fn bench_day1_part1(b: &mut Bencher) {
-        let input: Vec<i32> = fs::read_to_string("input").unwrap().lines()
-            .map(|x| x.parse::<i32>().unwrap()).collect();
-        b.iter(|| day1::part1(&input));
-    }
-
-    #[bench]
-    fn bench_day1_part2(b: &mut Bencher) {
-        let input: Vec<i32> = fs::read_to_string("input").unwrap().lines()
-            .map(|x| x.parse::<i32>().unwrap()).collect();
-        b.iter(|| day1::part2(&input));
+        Err(RunError::ArgError(e)) => println!("Invalid argument\n{:?}", e),
+        Err(RunError::ParseError) => println!("There was a problem parsing the input!"),
     }
 }
