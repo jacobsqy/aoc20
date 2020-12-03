@@ -2,6 +2,7 @@ mod day1;
 mod day2;
 mod day3;
 
+use reqwest::header::COOKIE;
 use std::env;
 use std::fmt;
 use std::fs;
@@ -42,13 +43,35 @@ pub struct Puzzle {
 
 impl Puzzle {
     fn new(day: &str, part: &str, filename: &str) -> Option<Puzzle> {
-        match fs::read_to_string(filename) {
-            Ok(content) => Some(Puzzle {
+        let client = reqwest::Client::new();
+        match client
+            .post(&format!("https://adventofcode.com/2020/day/{}/input", day))
+            .header(
+                COOKIE,
+                format!(
+                    "session={}",
+                    fs::read_to_string("secret.cookie")
+                        .unwrap()
+                        .lines()
+                        .next()
+                        .unwrap()
+                ),
+            )
+            .send()
+        {
+            Ok(mut response) => Some(Puzzle {
                 day: day.parse().unwrap(),
                 part: Part::from(part),
-                input: content,
+                input: response.text().unwrap(),
             }),
-            Err(_) => None,
+            _ => match fs::read_to_string(filename) {
+                Ok(content) => Some(Puzzle {
+                    day: day.parse().unwrap(),
+                    part: Part::from(part),
+                    input: content,
+                }),
+                Err(_) => None,
+            },
         }
     }
 }
