@@ -1,6 +1,7 @@
-use crate::Puzzle;
 use crate::Part;
+use crate::Puzzle;
 use crate::RunError;
+use crate::RunResult;
 
 struct Rule {
     least: usize,
@@ -13,7 +14,10 @@ impl Rule {
         let input: Vec<&str> = input.split(|c| c == ' ' || c == '-').collect();
         let least: usize = input[0].parse()?;
         let most: usize = input[1].parse()?;
-        let character: char = input[2].chars().next().ok_or_else(|| RunError::ParseError)?;
+        let character: char = input[2]
+            .chars()
+            .next()
+            .ok_or_else(|| RunError::ParseError)?;
         Ok(Rule {
             least,
             most,
@@ -22,7 +26,7 @@ impl Rule {
     }
 }
 
-pub fn run(puzzle: &Puzzle) -> Result<i32, RunError> {
+pub fn run(puzzle: &Puzzle) -> Result<RunResult, RunError> {
     let valid_password = match puzzle.part {
         Part::One => valid_password1,
         Part::Two => valid_password2,
@@ -37,7 +41,7 @@ pub fn run(puzzle: &Puzzle) -> Result<i32, RunError> {
             allowed_pwds += 1;
         }
     }
-    Ok(allowed_pwds)
+    Ok(RunResult::I32(allowed_pwds))
 }
 
 fn valid_password1(rule: Rule, pwd: &str) -> bool {

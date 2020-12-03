@@ -3,6 +3,7 @@ mod day2;
 mod day3;
 
 use std::env;
+use std::fmt;
 use std::fs;
 use std::num::ParseIntError;
 
@@ -48,6 +49,25 @@ impl Puzzle {
                 input: content,
             }),
             Err(_) => None,
+        }
+    }
+}
+
+pub enum RunResult {
+    I32(i32),
+    U32(u32),
+    VECI32(Vec<i32>),
+}
+
+impl fmt::Display for RunResult {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            RunResult::I32(x) => write!(f, "{}", x),
+            RunResult::U32(x) => write!(f, "{}", x),
+            RunResult::VECI32(xs) => {
+                let tmp: Vec<String> = xs.iter().map(|x| x.to_string()).collect();
+                write!(f, "[{}]", tmp.join(", "))
+            }
         }
     }
 }
