@@ -5,6 +5,7 @@ mod day1;
 mod day2;
 mod day3;
 mod day4;
+mod day5;
 
 use reqwest::header::COOKIE;
 use std::env;
@@ -113,6 +114,7 @@ fn main() {
             Puzzle { day: 2, .. } => day2::run(&p),
             Puzzle { day: 3, .. } => day3::run(&p),
             Puzzle { day: 4, .. } => day4::run(&p),
+            Puzzle { day: 5, .. } => day5::run(&p),
             _ => Err(RunError::NoResult),
         },
         _ => Err(RunError::ArgError(String::from("Could not parse day"))),
