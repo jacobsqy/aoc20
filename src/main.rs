@@ -1,3 +1,6 @@
+#![feature(test)]
+extern crate test;
+
 mod day1;
 mod day2;
 mod day3;
@@ -120,5 +123,31 @@ fn main() {
         Err(RunError::NoResult) => println!("No answer found!"),
         Err(RunError::ArgError(e)) => println!("Invalid argument\n{:?}", e),
         Err(RunError::ParseError) => println!("There was a problem parsing the input!"),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use test::Bencher;
+
+    #[test]
+    fn test_day4() {
+        match day4::run(&Puzzle::new("4", "2", "").unwrap()) {
+            Ok(x) => assert_eq!(x.to_string(), "147"),
+            _ => panic!("Test could not be performed"),
+        }
+    }
+
+    #[bench]
+    fn bench_day4_part1(b: &mut Bencher) {
+        let puzzle: Puzzle = Puzzle::new("4", "1", "").unwrap();
+        b.iter(|| day4::run(&puzzle));
+    }
+
+    #[bench]
+    fn bench_day4_part2(b: &mut Bencher) {
+        let puzzle: Puzzle = Puzzle::new("4", "2", "").unwrap();
+        b.iter(|| day4::run(&puzzle));
     }
 }
