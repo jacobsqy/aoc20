@@ -47,37 +47,35 @@ pub struct Puzzle {
 }
 
 impl Puzzle {
-    fn new(day: &str, part: &str, filename: &str) -> Option<Puzzle> {
-        let client = reqwest::Client::new();
-        match client
-            .post(&format!("https://adventofcode.com/2020/day/{}/input", day))
-            .header(
-                COOKIE,
-                format!(
-                    "session={}",
-                    fs::read_to_string("secret.cookie")
-                        .unwrap()
-                        .lines()
-                        .next()
-                        .unwrap()
-                ),
-            )
-            .send()
-        {
-            Ok(mut response) => Some(Puzzle {
-                day: day.parse().unwrap(),
-                part: Part::from(part),
-                input: response.text().unwrap(),
-            }),
-            _ => match fs::read_to_string(filename) {
-                Ok(content) => Some(Puzzle {
-                    day: day.parse().unwrap(),
-                    part: Part::from(part),
-                    input: content,
-                }),
-                Err(_) => None,
-            },
-        }
+    fn new(day: &str, part: &str, filename: Option<&String>) -> Option<Puzzle> {
+        let content = match filename {
+            Some(path) => fs::read_to_string(path).unwrap(),
+            None => {
+                let client = reqwest::Client::new();
+                client
+                    .post(&format!("https://adventofcode.com/2020/day/{}/input", day))
+                    .header(
+                        COOKIE,
+                        format!(
+                            "session={}",
+                            fs::read_to_string("secret.cookie")
+                                .unwrap()
+                                .lines()
+                                .next()
+                                .unwrap()
+                        ),
+                    )
+                    .send()
+                    .unwrap()
+                    .text()
+                    .unwrap()
+            }
+        };
+        Some(Puzzle {
+            day: day.parse().unwrap(),
+            part: Part::from(part),
+            input: content,
+        })
     }
 }
 
@@ -104,7 +102,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let day = &args[1];
     let part = &args[2];
-    let filename = &args[3];
+    let filename = args.get(3);
 
     let puzzle: Option<Puzzle> = Puzzle::new(day, part, filename);
 
@@ -135,7 +133,7 @@ mod tests {
 
     #[test]
     fn test_day4() {
-        match day4::run(&Puzzle::new("4", "2", "").unwrap()) {
+        match day4::run(&Puzzle::new("4", "2", None).unwrap()) {
             Ok(x) => assert_eq!(x.to_string(), "147"),
             _ => panic!("Test could not be performed"),
         }
@@ -143,13 +141,13 @@ mod tests {
 
     #[bench]
     fn bench_day4_part1(b: &mut Bencher) {
-        let puzzle: Puzzle = Puzzle::new("4", "1", "").unwrap();
+        let puzzle: Puzzle = Puzzle::new("4", "1", None).unwrap();
         b.iter(|| day4::run(&puzzle));
     }
 
     #[bench]
     fn bench_day4_part2(b: &mut Bencher) {
-        let puzzle: Puzzle = Puzzle::new("4", "2", "").unwrap();
+        let puzzle: Puzzle = Puzzle::new("4", "2", None).unwrap();
         b.iter(|| day4::run(&puzzle));
     }
 }

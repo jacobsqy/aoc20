@@ -66,26 +66,26 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        let puzzle: Puzzle = Puzzle::new("5", "2", "").unwrap();
+        let puzzle: Puzzle = Puzzle::new("5", "2", None).unwrap();
         assert_eq!(part2(&parse_ids(&puzzle.input)), 592);
     }
 
     #[bench]
     fn bench_day5_parse(b: &mut Bencher) {
-        let puzzle: Puzzle = Puzzle::new("5", "1", "").unwrap();
+        let puzzle: Puzzle = Puzzle::new("5", "1", None).unwrap();
         b.iter(|| parse_ids(&puzzle.input));
     }
 
     #[bench]
     fn bench_day5_part1(b: &mut Bencher) {
-        let puzzle: Puzzle = Puzzle::new("5", "1", "").unwrap();
+        let puzzle: Puzzle = Puzzle::new("5", "1", None).unwrap();
         let parsed_input = parse_ids(&puzzle.input);
         b.iter(|| part1(&parsed_input));
     }
 
     #[bench]
     fn bench_day5_part2(b: &mut Bencher) {
-        let puzzle: Puzzle = Puzzle::new("5", "2", "").unwrap();
+        let puzzle: Puzzle = Puzzle::new("5", "2", None).unwrap();
         let parsed_input = parse_ids(&puzzle.input);
         b.iter(|| part2(&parsed_input));
     }
