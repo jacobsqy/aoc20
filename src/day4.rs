@@ -7,7 +7,6 @@ pub fn run(puzzle: &Puzzle) -> Result<RunResult, RunError> {
     match puzzle.part {
         Part::One => Ok(RunResult::U32(part1(&puzzle.input))),
         Part::Two => Ok(RunResult::U32(part2(&puzzle.input))),
-        _ => Err(RunError::NoResult),
     }
 }
 
@@ -48,13 +47,13 @@ fn part2(input: &str) -> u32 {
             let key = key_value[0];
             let value = key_value[1];
             match key {
-                "byr" => valid_byr_bool = valid_byr(value.trim()),
-                "iyr" => valid_iyr_bool = valid_iyr(value.trim()),
-                "eyr" => valid_eyr_bool = valid_eyr(value.trim()),
-                "hgt" => valid_hgt_bool = valid_hgt(value.trim()),
-                "hcl" => valid_hcl_bool = valid_hcl(value.trim()),
-                "ecl" => valid_ecl_bool = valid_ecl(value.trim()),
-                "pid" => valid_pid_bool = valid_pid(value.trim()),
+                "byr" => valid_byr_bool = in_range(value, 1920, 2002),
+                "iyr" => valid_iyr_bool = in_range(value, 2010, 2020),
+                "eyr" => valid_eyr_bool = in_range(value, 2020, 2030),
+                "hgt" => valid_hgt_bool = valid_hgt(value),
+                "hcl" => valid_hcl_bool = valid_hcl(value),
+                "ecl" => valid_ecl_bool = valid_ecl(value),
+                "pid" => valid_pid_bool = valid_pid(value),
                 _ => (),
             };
         }
@@ -67,41 +66,14 @@ fn part2(input: &str) -> u32 {
             && valid_pid_bool
         {
             allowed_passports += 1;
-            println!("{}", passport.replace("\n", "").replace(" ", ""));
         }
     }
     allowed_passports
 }
 
-/*
- * byr (Birth Year) - four digits; at least 1920 and at most 2002.
- */
-fn valid_byr(value: &str) -> bool {
-    let int_value = value.parse::<u32>();
-    match int_value {
-        Ok(x) => 1920 <= x && x <= 2002,
-        Err(_) => false,
-    }
-}
-
-/*
- * iyr (Issue Year) - four digits; at least 2010 and at most 2020.
- */
-fn valid_iyr(value: &str) -> bool {
-    let int_value = value.parse::<u32>();
-    match int_value {
-        Ok(x) => 2010 <= x && x <= 2020,
-        Err(_) => false,
-    }
-}
-
-/*
- * eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
- */
-fn valid_eyr(value: &str) -> bool {
-    let int_value = value.parse::<u32>();
-    match int_value {
-        Ok(x) => 2020 <= x && x <= 2030,
+fn in_range(value: &str, lower: u32, upper: u32) -> bool {
+    match value.parse::<u32>() {
+        Ok(year) => lower <= year && year <= upper,
         Err(_) => false,
     }
 }
@@ -119,18 +91,13 @@ fn valid_hgt(value: &str) -> bool {
     } else {
         ""
     };
-    let int_value = value.trim_end_matches(unit).parse::<u32>();
-    match int_value {
-        Ok(x) => {
-            if unit == "cm" {
-                150 <= x && x <= 193
-            } else if unit == "in" {
-                59 <= x && x <= 76
-            } else {
-                false
-            }
-        }
-        Err(_) => false,
+    let value: &str = value.trim_end_matches(unit);
+    if unit == "cm" {
+        in_range(value, 150, 193)
+    } else if unit == "in" {
+        in_range(value, 59, 76)
+    } else {
+        false
     }
 }
 
@@ -184,7 +151,8 @@ fn valid_pid(value: &str) -> bool {
     num_of_chars == 9
 }
 
-mod test {
+#[cfg(test)]
+mod tests {
     use super::*;
 
     #[test]
@@ -201,10 +169,10 @@ mod test {
 
     #[test]
     fn test_byr() {
-        assert_eq!(valid_byr("2002"), true);
-        assert_eq!(valid_byr("2003"), false);
+        assert_eq!(in_range("2002", 1920, 2002), true);
+        assert_eq!(in_range("2003", 1920, 2002), false);
 
-        assert_eq!(valid_byr("1989"), true);
+        assert_eq!(in_range("1989", 1920, 2002), true);
     }
 
     #[test]
@@ -228,12 +196,12 @@ mod test {
 
     #[test]
     fn test_iyr() {
-        assert_eq!(valid_iyr("2014"), true);
+        assert_eq!(in_range("2014", 2010, 2020), true);
     }
 
     #[test]
     fn test_eyr() {
-        assert_eq!(valid_eyr("2029"), true);
+        assert_eq!(in_range("2029", 2020, 2030), true);
     }
 
     #[test]
@@ -251,9 +219,4 @@ mod test {
 
         assert_eq!(valid_pid("896056539"), true);
     }
-
-    //#[bench]
-    //fn bench_part1() {
-
-    //}
 }
