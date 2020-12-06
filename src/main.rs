@@ -1,12 +1,31 @@
 #![feature(test)]
 extern crate test;
 
-mod day1;
-mod day2;
-mod day3;
-mod day4;
-mod day5;
-mod day6;
+mod day01;
+mod day02;
+mod day03;
+mod day04;
+mod day05;
+mod day06;
+mod day07;
+mod day08;
+mod day09;
+mod day10;
+mod day11;
+mod day12;
+mod day13;
+mod day14;
+mod day15;
+mod day16;
+mod day17;
+mod day18;
+mod day19;
+mod day20;
+mod day21;
+mod day22;
+mod day23;
+mod day24;
+mod day25;
 
 use reqwest::header::COOKIE;
 use std::env;
@@ -109,12 +128,31 @@ fn main() {
 
     let result = match puzzle {
         Some(p) => match p {
-            Puzzle { day: 1, .. } => day1::run(&p),
-            Puzzle { day: 2, .. } => day2::run(&p),
-            Puzzle { day: 3, .. } => day3::run(&p),
-            Puzzle { day: 4, .. } => day4::run(&p),
-            Puzzle { day: 5, .. } => day5::run(&p),
-            Puzzle { day: 6, .. } => day6::run(&p),
+            Puzzle { day: 1, .. } => day01::run(&p),
+            Puzzle { day: 2, .. } => day02::run(&p),
+            Puzzle { day: 3, .. } => day03::run(&p),
+            Puzzle { day: 4, .. } => day04::run(&p),
+            Puzzle { day: 5, .. } => day05::run(&p),
+            Puzzle { day: 6, .. } => day06::run(&p),
+            Puzzle { day: 7, .. } => day07::run(&p),
+            Puzzle { day: 8, .. } => day08::run(&p),
+            Puzzle { day: 9, .. } => day09::run(&p),
+            Puzzle { day: 10, .. } => day10::run(&p),
+            Puzzle { day: 11, .. } => day11::run(&p),
+            Puzzle { day: 12, .. } => day12::run(&p),
+            Puzzle { day: 13, .. } => day13::run(&p),
+            Puzzle { day: 14, .. } => day14::run(&p),
+            Puzzle { day: 15, .. } => day15::run(&p),
+            Puzzle { day: 16, .. } => day16::run(&p),
+            Puzzle { day: 17, .. } => day17::run(&p),
+            Puzzle { day: 18, .. } => day18::run(&p),
+            Puzzle { day: 19, .. } => day19::run(&p),
+            Puzzle { day: 20, .. } => day20::run(&p),
+            Puzzle { day: 21, .. } => day21::run(&p),
+            Puzzle { day: 22, .. } => day22::run(&p),
+            Puzzle { day: 23, .. } => day23::run(&p),
+            Puzzle { day: 24, .. } => day24::run(&p),
+            Puzzle { day: 25, .. } => day25::run(&p),
             _ => Err(RunError::NoResult),
         },
         _ => Err(RunError::ArgError(String::from("Could not parse day"))),
