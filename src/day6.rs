@@ -9,7 +9,6 @@ pub fn run(puzzle: &Puzzle) -> Result<RunResult, RunError> {
     match puzzle.part {
         Part::One => Ok(RunResult::U32(part1(&puzzle.input))),
         Part::Two => Ok(RunResult::U32(part2(&puzzle.input))),
-        //_ => Err(RunError::NoResult),
     }
 }
 
@@ -32,9 +31,10 @@ fn part2(string: &str) -> u32 {
     let mut result = 0;
     let mut qna: HashMap<char, usize> = HashMap::new();
     for group in string.split("\n\n") {
-        let group_members = group.lines().count();
-        for c in group.chars() {
-            if c != '\n' {
+        let mut group_members = 0;
+        for member in group.lines() {
+            group_members += 1;
+            for c in member.chars() {
                 qna.entry(c).and_modify(|x| *x += 1).or_insert(1);
             }
         }
