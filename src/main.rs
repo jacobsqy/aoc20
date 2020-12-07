@@ -173,7 +173,7 @@ mod tests {
 
     #[test]
     fn test_day4() {
-        match day4::run(&Puzzle::new("4", "2", None).unwrap()) {
+        match day04::run(&Puzzle::new("4", "2", None).unwrap()) {
             Ok(x) => assert_eq!(x.to_string(), "147"),
             _ => panic!("Test could not be performed"),
         }
@@ -182,12 +182,12 @@ mod tests {
     #[bench]
     fn bench_day4_part1(b: &mut Bencher) {
         let puzzle: Puzzle = Puzzle::new("4", "1", None).unwrap();
-        b.iter(|| day4::run(&puzzle));
+        b.iter(|| day04::run(&puzzle));
     }
 
     #[bench]
     fn bench_day4_part2(b: &mut Bencher) {
         let puzzle: Puzzle = Puzzle::new("4", "2", None).unwrap();
-        b.iter(|| day4::run(&puzzle));
+        b.iter(|| day04::run(&puzzle));
     }
 }
