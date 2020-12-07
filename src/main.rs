@@ -1,4 +1,5 @@
 #![feature(test)]
+#![feature(str_split_once)]
 extern crate test;
 
 mod day01;
