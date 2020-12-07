@@ -37,25 +37,18 @@ fn parse(input: &str) -> HashMap<&str, Vec<(u32, &str)>> {
 }
 
 fn part1(rules: &HashMap<&str, Vec<(u32, &str)>>) -> u32 {
-    let x = find_all_parent_bags(rules, "shiny gold");
-    x.len() as u32
+    part1_helper(rules, "shiny gold").len() as u32 - 1
 }
 
-fn find_all_parent_bags(
-    rules: &HashMap<&str, Vec<(u32, &str)>>,
-    bag_to_find: &str,
-) -> HashSet<String> {
-    let mut parents = find_parent_bags(rules, bag_to_find);
-    if parents.len() > 0 {
-        for parent in parents.clone() {
-            let mut grand_parent = find_all_parent_bags(rules, &parent);
-            parents = parents
-                .union(&mut grand_parent)
-                .map(|c| c.clone())
-                .collect();
+fn part1_helper(rules: &HashMap<&str, Vec<(u32, &str)>>, bag_to_find: &str) -> HashSet<String> {
+    let mut ancestors = HashSet::new();
+    ancestors.insert(String::from(bag_to_find));
+    for parent_bag in find_parent_bags(rules, bag_to_find) {
+        for ancestor in part1_helper(rules, &parent_bag) {
+            ancestors.insert(ancestor);
         }
     }
-    parents
+    ancestors
 }
 
 fn find_parent_bags(rules: &HashMap<&str, Vec<(u32, &str)>>, bag_to_find: &str) -> HashSet<String> {
