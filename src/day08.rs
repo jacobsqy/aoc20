@@ -40,19 +40,15 @@ fn part1(lines: &Vec<&str>) -> Result<RunResult, RunError> {
 
 fn part2(lines: &Vec<&str>) -> Result<RunResult, RunError> {
     for i in 0..lines.len() {
-        if lines[i].contains("jmp") {
-            let mut modified_lines: Vec<&str> = lines.clone();
+        if lines[i].starts_with("jmp") {
             let new_line = lines[i].replace("jmp", "nop");
-            modified_lines[i] = &new_line;
-            match part1(&modified_lines) {
+            match part1(&[&lines[0..i], &[&new_line], &lines[i + 1..]].concat()) {
                 Err(_) => (),
                 r => return r,
             }
-        } else if lines[i].contains("nop") {
-            let mut modified_lines: Vec<&str> = lines.clone();
-            let new_line = lines[i].replace("jmp", "nop");
-            modified_lines[i] = &new_line;
-            match part1(&modified_lines) {
+        } else if lines[i].starts_with("nop") {
+            let new_line = lines[i].replace("nop", "jmp");
+            match part1(&[&lines[0..i], &[&new_line], &lines[i + 1..]].concat()) {
                 Err(_) => (),
                 r => return r,
             }
