@@ -103,6 +103,7 @@ impl Puzzle {
 pub enum RunResult {
     I32(i32),
     U32(u32),
+    U64(u64),
     VECI32(Vec<i32>),
 }
 
@@ -111,6 +112,7 @@ impl fmt::Display for RunResult {
         match self {
             RunResult::I32(x) => write!(f, "{}", x),
             RunResult::U32(x) => write!(f, "{}", x),
+            RunResult::U64(x) => write!(f, "{}", x),
             RunResult::VECI32(xs) => {
                 let tmp: Vec<String> = xs.iter().map(|x| x.to_string()).collect();
                 write!(f, "[{}]", tmp.join(", "))
