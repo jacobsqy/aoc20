@@ -29,10 +29,10 @@ fn part1(input: &str) -> u32 {
 
         for i in 0..seats.len() {
             for (j, seat) in seats[i].iter().enumerate() {
-                if *seat == 'L' && occupied_adjacent_seats(i, j, &seats) == 0 {
+                if *seat == 'L' && occupied_adjacent_seats(i as i32, j as i32, &seats) == 0 {
                     new_seats[i][j] = '#';
                     changed = true;
-                } else if *seat == '#' && occupied_adjacent_seats(i, j, &seats) > 3 {
+                } else if *seat == '#' && occupied_adjacent_seats(i as i32, j as i32, &seats) > 3 {
                     new_seats[i][j] = 'L';
                     changed = true;
                 }
@@ -52,37 +52,37 @@ fn part1(input: &str) -> u32 {
     occupied_seats
 }
 
-fn occupied_adjacent_seats(x: usize, y: usize, seats: &Vec<Vec<char>>) -> u32 {
+fn occupied_adjacent_seats(x: i32, y: i32, seats: &Vec<Vec<char>>) -> u32 {
     let mut result = 0;
-    if x > 0 && y > 0 && seats.get(x - 1).map(|x| x.get(y - 1)) == Some(Some(&'#')) {
+    if seat_is_occupied(x - 1, y - 1, &seats).unwrap_or(false) {
         result += 1;
     }
-    if y > 0 && seats.get(x).map(|x| x.get(y - 1)) == Some(Some(&'#')) {
+    if seat_is_occupied(x, y - 1, &seats).unwrap_or(false) {
         result += 1;
     }
-    if y > 0 && seats.get(x + 1).map(|x| x.get(y - 1)) == Some(Some(&'#')) {
+    if seat_is_occupied(x + 1, y - 1, &seats).unwrap_or(false) {
         result += 1;
     }
-    if x > 0 && seats.get(x - 1).map(|x| x.get(y)) == Some(Some(&'#')) {
+    if seat_is_occupied(x - 1, y, &seats).unwrap_or(false) {
         result += 1;
     }
-    if seats.get(x + 1).map(|x| x.get(y)) == Some(Some(&'#')) {
+    if seat_is_occupied(x + 1, y, &seats).unwrap_or(false) {
         result += 1;
     }
-    if x > 0 && seats.get(x - 1).map(|x| x.get(y + 1)) == Some(Some(&'#')) {
+    if seat_is_occupied(x - 1, y + 1, &seats).unwrap_or(false) {
         result += 1;
     }
-    if seats.get(x).map(|x| x.get(y + 1)) == Some(Some(&'#')) {
+    if seat_is_occupied(x, y + 1, &seats).unwrap_or(false) {
         result += 1;
     }
-    if seats.get(x + 1).map(|x| x.get(y + 1)) == Some(Some(&'#')) {
+    if seat_is_occupied(x + 1, y + 1, &seats).unwrap_or(false) {
         result += 1;
     }
     result
 }
 
-fn seat_is_occupied(x: usize, y: usize, seats: &Vec<Vec<char>>) -> Option<bool> {
-    if x > 0 && y > 0 && *seats.get(x)?.get(y)? == '#' {
+fn seat_is_occupied(x: i32, y: i32, seats: &Vec<Vec<char>>) -> Option<bool> {
+    if x >= 0 && y >= 0 && *seats.get(x as usize)?.get(y as usize)? == '#' {
         return Some(true);
     }
     Some(false)
