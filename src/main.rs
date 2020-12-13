@@ -1,5 +1,6 @@
 #![feature(test)]
 #![feature(str_split_once)]
+#![feature(iterator_fold_self)]
 extern crate test;
 
 mod day01;
