@@ -2,7 +2,6 @@ use crate::Part;
 use crate::Puzzle;
 use crate::RunError;
 use crate::RunResult;
-use std::collections::HashMap;
 
 pub fn run(puzzle: &Puzzle) -> Result<RunResult, RunError> {
     match puzzle.part {
@@ -24,12 +23,6 @@ fn part1(string: &str) -> u32 {
             ones += 1;
         }
 
-        /*
-         *occurences
-         *    .entry(line - prev_line)
-         *    .and_modify(|x| *x = *x + 1)
-         *    .or_insert(1);
-         */
         prev_line = line;
     }
     ones * threes
