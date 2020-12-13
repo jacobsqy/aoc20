@@ -40,7 +40,6 @@ fn part2(input: &str) -> u64 {
     let (time, modulo) = buses
         .fold_first(|(i0, b0), (i1, b1)| find_mod(i0, i1, b0, b1))
         .unwrap();
-    println!("{}", modulo);
     (modulo - time) as u64
 }
 
