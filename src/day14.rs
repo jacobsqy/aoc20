@@ -60,26 +60,20 @@ fn part2(input: &str) -> u64 {
                 .collect();
             let value: u64 = split[2].parse::<u64>().unwrap();
 
-            let mut masked_adress: Vec<Option<u32>> = Vec::new();
-            for (adress_bit, mask_bit) in adress
-                .iter()
-                .zip(&bitmask)
-                .map(|(x, y)| (x.to_digit(2).unwrap(), y.to_digit(2)))
+            for a in find_all_adresses(
+                adress
+                    .iter()
+                    .zip(&bitmask)
+                    .map(|(x, y)| {
+                        y.to_digit(2)
+                            .map_or(*y, |opty| digit_to_char(opty | x.to_digit(2).unwrap()))
+                    })
+                    .collect(),
+            )
+            .iter()
+            .map(|a| u64::from_str_radix(&a.into_iter().collect::<String>(), 2).unwrap())
             {
-                if mask_bit.is_some() {
-                    masked_adress.push(Some(adress_bit | mask_bit.unwrap()));
-                } else {
-                    masked_adress.push(None);
-                }
-            }
-
-            let all_adresses: Vec<u64> = find_all_adresses(&masked_adress)
-                .iter()
-                .map(|a| u64::from_str_radix(&a.into_iter().collect::<String>(), 2).unwrap())
-                .collect();
-
-            for adress in all_adresses {
-                memory.insert(adress, value);
+                memory.insert(a, value);
             }
         } else if split[0] == "mask" {
             bitmask = split[1].chars().collect();
@@ -89,20 +83,17 @@ fn part2(input: &str) -> u64 {
     memory.values().sum()
 }
 
-fn find_all_adresses(input: &Vec<Option<u32>>) -> Vec<Vec<char>> {
+fn find_all_adresses(input: Vec<char>) -> Vec<Vec<char>> {
     let mut result: Vec<Vec<char>> = Vec::new();
     let x_indeces: Vec<usize> = input
         .iter()
         .enumerate()
-        .filter(|(_i, x)| x.is_none())
+        .filter(|(_i, x)| **x == 'X')
         .map(|(i, _)| i)
         .collect();
 
     for x in 0..2_u32.pow(x_indeces.len() as u32) {
-        let mut adress: Vec<char> = input
-            .iter()
-            .map(|x| digit_to_char(x.unwrap_or(0)))
-            .collect();
+        let mut adress: Vec<char> = input.clone();
         for (i, x_bit) in format!("{:036b}", x)
             .chars()
             .skip(36 - x_indeces.len())
