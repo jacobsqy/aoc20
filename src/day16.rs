@@ -12,6 +12,18 @@ pub fn run(puzzle: &Puzzle) -> Result<RunResult, RunError> {
     }
 }
 
+// returns a triplet of (rules, ticket, nearby tickets)
+//fn parse(
+//input: &str,
+//) -> (
+//HashMap<&str, ((u64, u64), (u64, u64))>,
+//Vec<u64>,
+//Vec<Vec<u64>>,
+//) {
+//let mut input = input.split("\n\n");
+//let ranges: HashMap<&str, ((u64, u64), (u64, u64))> = HashMap::new();
+//}
+
 fn part1(input: &str) -> u64 {
     let mut input = input.split("\n\n");
     let mut ranges: HashMap<&str, ((u64, u64), (u64, u64))> = HashMap::new();
@@ -82,7 +94,7 @@ fn part2(input: &str) -> u64 {
             let new_fields = find_valid_fields(field, &ranges);
             valid_fields
                 .entry(field_index)
-                .and_modify(|x| *x = x.intersection(&new_fields).map(|elem| *elem).collect())
+                .and_modify(|x| *x = x.intersection(&new_fields).copied().collect())
                 .or_insert(new_fields);
         }
     }
@@ -91,7 +103,7 @@ fn part2(input: &str) -> u64 {
     let mut used_fields: HashSet<&str> = HashSet::new();
     while used_fields.len() != valid_fields.len() {
         for (i, fields) in &valid_fields {
-            let diff: Vec<&str> = fields.difference(&used_fields).map(|elem| *elem).collect();
+            let diff: Vec<&str> = fields.difference(&used_fields).copied().collect();
             if diff.len() == 1 {
                 result.insert(*i, diff[0]);
                 used_fields.insert(diff[0]);
