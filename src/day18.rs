@@ -6,20 +6,51 @@ use crate::RunResult;
 pub fn run(puzzle: &Puzzle) -> Result<RunResult, RunError> {
     match puzzle.part {
         Part::One => Ok(RunResult::U64(part1(&puzzle.input))),
-        //Part::Two => Ok(RunResult::U32(part2(&puzzle.input))),
-        _ => Err(RunError::NoResult),
+        Part::Two => Ok(RunResult::U64(part2(&puzzle.input))),
     }
 }
 
+fn part2(input: &str) -> u64 {
+    input
+        .lines()
+        .map(|l| l.replace(" ", ""))
+        .map(|line| eval2(0, &|x, y| x + y, &line))
+        .sum()
+}
+
 fn part1(input: &str) -> u64 {
-    //let expr = Expr::parse(&input.lines().next().unwrap().replace(" ", ""));
-    //println!("{}", expr);
-    //expr.eval()
     input
         .lines()
         .map(|l| l.replace(" ", ""))
         .map(|line| eval(0, &|x, y| x + y, &line))
         .sum()
+}
+
+fn eval2(value: u64, operator: &dyn Fn(u64, u64) -> u64, string: &str) -> u64 {
+    match string.chars().next() {
+        Some('(') => {
+            let par_index = find_matching_paranthesis(string);
+            let par_result = eval2(0, &|x, y| x + y, &string[1..par_index]);
+            eval2(
+                operator(value, par_result),
+                operator,
+                &string[par_index + 1..],
+            )
+        }
+        Some('*') => value * eval2(0, &|x, y| x + y, &string[1..]),
+        Some('+') => eval2(value, &|x, y| x + y, &string[1..]),
+        Some(_) => {
+            let op_index = string
+                .find(|c: char| !c.is_digit(10))
+                .unwrap_or(string.len());
+            eval2(
+                operator(value, string[0..op_index].parse().unwrap()),
+                operator,
+                &string[op_index..],
+            )
+        }
+        None => value,
+    }
 }
 
 fn eval(value: u64, operator: &dyn Fn(u64, u64) -> u64, string: &str) -> u64 {
